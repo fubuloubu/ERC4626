@@ -1,2 +1,3 @@
 eth-ape
 black
+jsbeautifier
