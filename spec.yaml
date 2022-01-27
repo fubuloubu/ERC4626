@@ -135,12 +135,12 @@ ERC4626:
   stateMutability: nonpayable
 
   inputs:
-  # Party who should receive the deposited shares
-  - name: receiver
-    type: address
   # Maximum number of assets to process in the deposit
   - name: assetsToDeposit
     type: uint256
+  # Party who should receive the deposited shares
+  - name: receiver
+    type: address
 
   outputs:
   # Number of shares created and given to `receiver`
@@ -193,12 +193,12 @@ ERC4626:
   stateMutability: nonpayable
 
   inputs:
-  # Party who should receive the deposited shares
-  - name: receiver
-    type: address
   # Maximum number of shares to create in the mint
   - name: sharesToMint
     type: uint256
+  # Party who should receive the deposited shares
+  - name: receiver
+    type: address
 
   outputs:
   # Number of assets deposited to the Vault
@@ -272,12 +272,17 @@ ERC4626:
   stateMutability: nonpayable
 
   inputs:
-  # Party who should receive redeemed assets
-  - name: receiver
-    type: address
   # Number of shares they wish to redeem
   - name: sharesToRedeem
     type: uint256
+  # Party who should receive redeemed assets
+  - name: receiver
+    type: address
+  # Owner who shares should be redeemed from
+  # NOTE: `owner` should pre-approve this redemption with Vault
+  - name: owner
+    type: address
+
 
   outputs:
   # Number of assets redeemed and sent to receiver
@@ -285,29 +290,6 @@ ERC4626:
   #       this value and `maxAssets` returned from `previewRedeem`
   # NOTE: Implementors of this ERC that intend to support EOA account access
   #       should add a means to revert due to expected slippage loss.
-  - name: assetsRedeemed
-    type: uint256
-
-# Same as `redeem`, but shares are being redeemed on behalf of
-# another party who has previous approved via Vault's ERC20 approval flow
-- name: redeemFrom
-  type: function
-  stateMutability: nonpayable
-
-  inputs:
-  # Owner who shares should be redeemed from
-  # NOTE: `owner` should pre-approve this redemption with Vault
-  - name: owner
-    type: address
-  # Same as `redeem`
-  - name: receiver
-    type: address
-  # Same as `redeem`
-  - name: sharesToRedeem
-    type: uint256
-
-  outputs:
-  # Same as `redeem`
   - name: assetsRedeemed
     type: uint256
 
@@ -355,12 +337,17 @@ ERC4626:
   stateMutability: nonpayable
 
   inputs:
-  # Party who should receive redeemed assets
-  - name: receiver
-    type: address
   # Number of shares they wish to redeem
   - name: sharesToRedeem
     type: uint256
+  # Party who should receive redeemed assets
+  - name: receiver
+    type: address
+  # Owner who shares should be redeemed from
+  # NOTE: `owner` should pre-approve this redemption with Vault
+  - name: owner
+    type: address
+
 
   outputs:
   # Number of assets redeemed and sent to receiver
@@ -368,29 +355,6 @@ ERC4626:
   #       this value and `maxAssets` returned from `previewWithdraw`
   # NOTE: Implementors of this ERC that intend to support EOA account access
   #       should add a means to revert due to expected slippage loss.
-  - name: assetsWithdrawn
-    type: uint256
-
-# Same as `withdraw`, but shares are being redeemed on behalf of
-# another party who has previous approved via Vault's ERC20 approval flow
-- name: withdrawFrom
-  type: function
-  stateMutability: nonpayable
-
-  inputs:
-  # Owner who shares should be redeemed from
-  # NOTE: `owner` should pre-approve this redemption with Vault
-  - name: owner
-    type: address
-  # Same as `withdraw`
-  - name: receiver
-    type: address
-  # Same as `withdraw`
-  - name: sharesToRedeem
-    type: uint256
-
-  outputs:
-  # Same as `withdraw`
   - name: assetsWithdrawn
     type: uint256
 

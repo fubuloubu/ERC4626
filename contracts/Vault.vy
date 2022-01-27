@@ -125,9 +125,10 @@ def previewDeposit(amount: uint256) -> (uint256, uint256):
 
 
 @external
-def deposit(receiver: address, amount: uint256) -> uint256:
+def deposit(amount: uint256, receiver: address=msg.sender) -> uint256:
     shares: uint256 = self._calculateShares(amount)
     self.asset.transferFrom(msg.sender, self, amount)
+
     self.totalSupply += shares
     self.balanceOf[receiver] += shares
     log Deposit(msg.sender, receiver, amount)
@@ -141,9 +142,10 @@ def previewMint(shares: uint256) -> (uint256, uint256):
 
 
 @external
-def mint(receiver: address, shares: uint256) -> uint256:
+def mint(shares: uint256, receiver: address=msg.sender) -> uint256:
     amount: uint256 = self._calculateAssets(shares)
     self.asset.transferFrom(msg.sender, self, amount)
+
     self.totalSupply += shares
     self.balanceOf[receiver] += shares
     log Deposit(msg.sender, receiver, amount)
@@ -157,17 +159,7 @@ def previewWithdraw(amount: uint256) -> (uint256, uint256):
 
 
 @external
-def withdraw(receiver: address, amount: uint256) -> uint256:
-    shares: uint256 = self._calculateShares(amount)
-    self.totalSupply -= shares
-    self.balanceOf[msg.sender] -= shares
-    self.asset.transfer(receiver, amount)
-    log Withdraw(msg.sender, receiver, amount)
-    return shares
-
-
-@external
-def withdrawFrom(sender: address, receiver: address, amount: uint256) -> uint256:
+def withdraw(amount: uint256, receiver: address=msg.sender, sender: address=msg.sender) -> uint256:
     shares: uint256 = self._calculateShares(amount)
 
     if sender != msg.sender:
@@ -175,6 +167,7 @@ def withdrawFrom(sender: address, receiver: address, amount: uint256) -> uint256
 
     self.totalSupply -= shares
     self.balanceOf[sender] -= shares
+
     self.asset.transfer(receiver, amount)
     log Withdraw(sender, receiver, amount)
     return shares
@@ -187,23 +180,14 @@ def previewRedeem(shares: uint256) -> (uint256, uint256):
 
 
 @external
-def redeem(receiver: address, shares: uint256) -> uint256:
-    amount: uint256 = self._calculateAssets(shares)
-    self.totalSupply -= shares
-    self.balanceOf[msg.sender] -= shares
-    self.asset.transfer(receiver, amount)
-    log Withdraw(msg.sender, receiver, amount)
-    return amount
-
-
-@external
-def redeemFrom(sender: address, receiver: address, shares: uint256) -> uint256:
+def redeem(shares: uint256, receiver: address=msg.sender, sender: address=msg.sender) -> uint256:
     if sender != msg.sender:
         self.allowance[sender][msg.sender] -= shares
 
     amount: uint256 = self._calculateAssets(shares)
     self.totalSupply -= shares
     self.balanceOf[sender] -= shares
+
     self.asset.transfer(receiver, amount)
     log Withdraw(sender, receiver, amount)
     return amount

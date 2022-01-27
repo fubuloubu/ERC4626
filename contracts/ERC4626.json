@@ -57,11 +57,11 @@
   "type": "function",
   "stateMutability": "nonpayable",
   "inputs": [{
-    "name": "receiver",
-    "type": "address"
-  }, {
     "name": "assetsToDeposit",
     "type": "uint256"
+  }, {
+    "name": "receiver",
+    "type": "address"
   }],
   "outputs": [{
     "name": "sharesCreated",
@@ -87,11 +87,11 @@
   "type": "function",
   "stateMutability": "nonpayable",
   "inputs": [{
-    "name": "receiver",
-    "type": "address"
-  }, {
     "name": "sharesToMint",
     "type": "uint256"
+  }, {
+    "name": "receiver",
+    "type": "address"
   }],
   "outputs": [{
     "name": "assetsAccepted",
@@ -133,29 +133,14 @@
   "type": "function",
   "stateMutability": "nonpayable",
   "inputs": [{
+    "name": "sharesToRedeem",
+    "type": "uint256"
+  }, {
     "name": "receiver",
     "type": "address"
   }, {
-    "name": "sharesToRedeem",
-    "type": "uint256"
-  }],
-  "outputs": [{
-    "name": "assetsRedeemed",
-    "type": "uint256"
-  }]
-}, {
-  "name": "redeemFrom",
-  "type": "function",
-  "stateMutability": "nonpayable",
-  "inputs": [{
     "name": "owner",
     "type": "address"
-  }, {
-    "name": "receiver",
-    "type": "address"
-  }, {
-    "name": "sharesToRedeem",
-    "type": "uint256"
   }],
   "outputs": [{
     "name": "assetsRedeemed",
@@ -181,29 +166,14 @@
   "type": "function",
   "stateMutability": "nonpayable",
   "inputs": [{
+    "name": "sharesToRedeem",
+    "type": "uint256"
+  }, {
     "name": "receiver",
     "type": "address"
   }, {
-    "name": "sharesToRedeem",
-    "type": "uint256"
-  }],
-  "outputs": [{
-    "name": "assetsWithdrawn",
-    "type": "uint256"
-  }]
-}, {
-  "name": "withdrawFrom",
-  "type": "function",
-  "stateMutability": "nonpayable",
-  "inputs": [{
     "name": "owner",
     "type": "address"
-  }, {
-    "name": "receiver",
-    "type": "address"
-  }, {
-    "name": "sharesToRedeem",
-    "type": "uint256"
   }],
   "outputs": [{
     "name": "assetsWithdrawn",
