@@ -18,14 +18,14 @@ implements:
 # All ERC4626 implementations must be use ERC20 to represent shares
 - ERC20
 
-# ERC4626 users should consider using the Metadata extension of ERC20,
-# and represent `name` and `symbol` as an extension to the underlying
+# ERC4626 users should consider using the Metadata extension of ERC20, and represent
+# `name` and `symbol` as an extension to the underlying
 - ERC20Metadata
 
-# ERC4626 users should consider using ERC165 to inform outside integrators
-# that they indeed comply to the ERC4626 interface, to ensure that
-# upstream contracts do not add a Vault that does not comply to the
-# interface, risking loss of funds for their contracts
+# ERC4626 users should consider using ERC165 to inform outside integrators that they
+# indeed comply to the ERC20, ERC20Metadata ext. and ERC4626 interfaces, to ensure that
+# upstream contracts do not add a Vault that does not comply to the interface, risking
+# loss of funds for their contracts
 - ERC165
 
 ERC4626:
@@ -45,13 +45,12 @@ ERC4626:
 # NOTE: Tokens per unit share e.g. `10**Vault.decimals()`
 # NOTE: Should be inclusive of any management or performance fee
 # NOTE: Should *not* be inclusive of any deposit or withdrawal fee
-# NOTE: In certain types of fee calculations, this calculation will
-#       not reflect the "per-user" price-per-share, and instead
-#       should reflect the "average-user" price-per-share, meaning
-#       what the average user should expect to exchange to and from.
-#       `assetsOf` should be used for more accurate calculations.
-# NOTE: This value may not be completely accurate according to
-#       slippage or other on-chain conditions.
+# NOTE: In certain types of fee calculations, this calculation will  not reflect the 
+#       "per-user" price-per-share, and instead should reflect the "average-user"
+#       price-per-share, meaning what the average user should expect to exchange to
+#       and from. `assetsOf` should be used for more accurate calculations.
+# NOTE: This value may not be completely accurate according to slippage or other
+#       on-chain conditions.
 - name: assetsPerShare
   type: function
   stateMutability: view
@@ -96,6 +95,8 @@ ERC4626:
 - name: maxDeposit
   type: function
   stateMutability: view
+
+  inputs: []
 
   outputs:
   # Number of assets that Vault can accept for deposits
