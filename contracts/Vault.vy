@@ -13,7 +13,7 @@ balanceOf: public(HashMap[address, uint256])
 allowance: public(HashMap[address, HashMap[address, uint256]])
 
 NAME: constant(String[10]) = "Test Vault"
-SYMBOL: constant(String[4]) = "TEST"
+SYMBOL: constant(String[5]) = "vTEST"
 DECIMALS: constant(uint8) = 18
 
 event Transfer:
@@ -54,7 +54,7 @@ def name() -> String[10]:
 
 @view
 @external
-def symbol() -> String[4]:
+def symbol() -> String[5]:
     return SYMBOL
 
 
