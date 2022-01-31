@@ -52,7 +52,7 @@ ERC4626:
 #       `assetsOf` should be used for more accurate calculations.
 # NOTE: This value may not be completely accurate according to
 #       slippage or other on-chain conditions.
-- name: pricePerShare
+- name: assetsPerShare
   type: function
   stateMutability: view
 
