@@ -92,35 +92,36 @@ ERC4626:
   - name: assets
     type: uint256
 
+# Total number of underlying assets that can be deposited
+- name: maxDeposit
+  type: function
+  stateMutability: view
+
+  outputs:
+  # Number of assets that Vault can accept for deposits
+  # NOTE: This number may be used in the `previewDeposit` or `deposit`
+  #       methods for `assets`
+  # NOTE: Return `MAX_UINT256` to specify there is no maximum amount
+  - name: maxAssets
+    type: uint256
+
 # Allow an on-chain or off-chain user to simulate the effects of their
 # deposit at the current block and on-chain conditions.
-# NOTE: This value should simulate as closely as possible the real
-#       outcome of a deposit. Integrators to this contract expect the
-#       represented slippage or loss to be under 1 basis point of accuracy.
+# NOTE: This value must simulate the real outcome of a deposit.
 - name: previewDeposit
   type: function
   stateMutability: view
 
   inputs:
-  # Maximum number of assets they wish to deposit
-  # NOTE: Vault will simulate attempt to deposit up to `maxAssets`
-  - name: maxAssets
+  # Exact number of assets they wish to deposit
+  - name: assets
     type: uint256
 
   outputs:
-  # Number of assets that Vault has simulated as deposited
-  # NOTE: This number may be less than `maxAssets` to communicate a
-  #       "deposit limit" or other such concept, where less than
-  #       `maxAssets` was taken from depositor, and the rest was either
-  #       refunded or simply not transferred in the first place
-  #       e.g. `depositedAssets <= maxAssets`
-  - name: depositedAssets
-    type: uint256
-  # Number of shares issued for `depositedAssets`
-  # NOTE: any discrepency between `shares * pricePerShare`
-  #       and `depositedAssets` should be considered slippage in share
-  #       price or some other type of condition, meaning the depositor
-  #       will lose assets by depositing
+  # Number of shares issued for `assets`
+  # NOTE: any discrepency between `shares * pricePerShare` and `assets`
+  #       should be considered slippage in share price or some other type of
+  #       condition, meaning the depositor will lose assets by depositing.
   # NOTE: can also be used to communicate a deposit fee
   - name: shares
     type: uint256
@@ -148,7 +149,7 @@ ERC4626:
   #       this value and `shares` returned from `previewDeposit`
   # NOTE: Implementors of this ERC that intend to support EOA account access
   #       should add a means to revert due to expected slippage loss.
-  - name: sharesCreated
+  - name: shares
     type: uint256
 
 # Allow an on-chain or off-chain user to simulate the effects of their
