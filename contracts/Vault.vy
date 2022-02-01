@@ -146,7 +146,12 @@ def maxMint() -> uint256:
 @view
 @internal
 def _previewMint(sharesAmount: uint256) -> uint256:
-    return ((shareAmount * self.asset.balanceOf(self)) - 1 / self.totalSupply_ + 1
+    numerator: uint256 = shareAmount * self.asset.balanceOf(self)
+    
+    if numerator == 0: 
+        return 0
+    
+    return ((numerator - 1) / self.totalSupply_) + 1
 
 
 @view
@@ -175,7 +180,12 @@ def maxWithdraw() -> uint256:
 @view
 @internal
 def _previewWithdraw(sharesAmount: uint256) -> uint256:
-    return ((assetAmount * self.totalSupply) - 1 / self.asset.balanceOf(self)) + 1
+    numerator: uint256 = assetAmount * self.totalSupply
+    
+    if numerator == 0: 
+        return 0
+    
+    return ((numerator - 1) / self.asset.balanceOf(self)) + 1
 
 
 @view
@@ -208,7 +218,7 @@ def maxRedeem() -> uint256:
 @view
 @internal
 def _previewRedeem(sharesAmount: uint256) -> uint256:
-    return shareAmount * self.asset.balanceOf(self)) / self.totalSupply_
+    return shareAmount * self.asset.balanceOf(self) / self.totalSupply
 
 
 @view
