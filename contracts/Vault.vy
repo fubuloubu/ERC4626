@@ -151,7 +151,7 @@ def _previewMint(sharesAmount: uint256) -> uint256:
     if numerator == 0: 
         return 0
     
-    return ((numerator - 1) / self.totalSupply_) + 1
+    return ((numerator - 1) / self.totalSupply) + 1
 
 
 @view
