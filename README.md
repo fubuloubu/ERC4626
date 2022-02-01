@@ -150,7 +150,7 @@ MAY *NOT* be completely accurate according to slippage or other on-chain conditi
 
 Total number of underlying assets that can be deposited.
 
-MUST return `2 ** 256 - 1` to specify there is no maximum amount of assets that may be deposited.
+MUST return `2 ** 256 - 1` if there is no limit on the maximum amount of assets that may be deposited.
 MAY be used in the `previewDeposit` or `deposit` methods for `assets` input parameter.
 
 ```yaml
@@ -224,7 +224,7 @@ Note that most implementations will require pre-approval of the Vault with the V
 
 Total number of underlying shares that can be minted.
 
-MUST return `2 ** 256 - 1` to specify there is no maximum amount of shares that may be minted.
+MUST return `2 ** 256 - 1` if there is no limit on the maximum amount of shares that may be minted.
 MAY be used in the `previewMint` or `mint` methods for `shares` input parameter.
 
 ```yaml
