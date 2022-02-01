@@ -103,6 +103,8 @@ def _calculateAssets(shareAmount: uint256) -> uint256:
     if totalSupply == 0:
         return 0
 
+    # NOTE: `shareAmount = 0` is extremely rare case, not optimizing for it
+    # NOTE: `totalAssets = 0` is extremely rare case, not optimizing for it
     return shareAmount * self.asset.balanceOf(self) / totalSupply
 
 
@@ -125,6 +127,8 @@ def _calculateShares(assetAmount: uint256) -> uint256:
     if totalAssets == 0:
         return assetAmount
 
+    # NOTE: `assetAmount = 0` is extremely rare case, not optimizing for it
+    # NOTE: `totalSupply = 0` is extremely rare case, not optimizing for it
     return assetAmount * self.totalSupply / totalAssets
 
 
