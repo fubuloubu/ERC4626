@@ -113,6 +113,7 @@ def _calculateAssets(shareAmount: uint256) -> uint256:
 def assetsPerShare() -> uint256:
     assets: uint256 = self._calculateAssets(10**convert(DECIMALS, uint256))
 
+    # NOTE: Vyper does lazy eval on if, so this avoids SLOADs most of the time
     if assets == 0 and self.asset.balanceOf(self) == 0:
         return 10**convert(DECIMALS, uint256)  # NOTE: Assume 1:1 price if nothing deposited yet
 
@@ -171,6 +172,7 @@ def maxMint() -> uint256:
 def previewMint(shares: uint256) -> uint256:
     assets: uint256 = self._calculateAssets(shares)
 
+    # NOTE: Vyper does lazy eval on if, so this avoids SLOADs most of the time
     if assets == 0 and self.asset.balanceOf(self) == 0:
         return shares  # NOTE: Assume 1:1 price if nothing deposited yet
 
