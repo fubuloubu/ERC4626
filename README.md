@@ -199,7 +199,6 @@ Any discrepency could cause a revert due to tight slippage bounds by caller.
 MUST emit the `Deposit` event.
 MAY support an additional flow in which the underlying tokens are owned by the Vault contract
 before the `deposit` execution, and are accounted for during `deposit`.
-SHOULD add a means to revert due to slippage loss if the implementation intends to support EOA account access directly.
 
 Note that most implementations will require pre-approval of the Vault with the Vault's underyling `asset` token.
 
@@ -273,7 +272,6 @@ Any discrepency could cause a revert due to tight slippage bounds by caller.
 MUST emit the `Deposit` event.
 MAY support an additional flow in which the underlying tokens are owned by the Vault contract
 before the `mint` execution, and are accounted for during `mint`.
-SHOULD add a means to revert due to slippage loss if the implementation intends to support EOA account access directly.
 
 Note that most implementations will require pre-approval of the Vault with the Vault's underyling `asset` token.
 
@@ -347,7 +345,6 @@ Any discrepency could cause a revert due to tight slippage bounds by caller.
 MUST emit the `Withdraw` event.
 MAY support an additional flow in which the underlying tokens are owned by the Vault contract
 before the `withdraw` execution, and are accounted for during `withdraw`.
-SHOULD add a means to revert due to slippage loss if the implementation intends to support EOA account access directly.
 
 Note that some implementations will require pre-requesting to the Vault before a withdrawal may be performed.
 Those methods should be performed separately.
@@ -424,7 +421,6 @@ Any discrepency could cause a revert due to tight slippage bounds by caller.
 MUST emit the `Withdraw` event.
 MAY support an additional flow in which the underlying tokens are owned by the Vault contract
 before the `redeem` execution, and are accounted for during `redeem`.
-SHOULD add a means to revert due to slippage loss if the implementation intends to support EOA account access directly.
 
 Note that some implementations will require pre-requesting to the Vault before a withdrawal may be performed.
 Those methods should be performed separately.
@@ -509,7 +505,6 @@ ERC-20 is enforced because implementation details like token approval
 and balance calculation directly carry over to the shares accounting.
 This standardization makes the Vaults immediately compatible with all ERC-20 use cases in addition to ERC-4626.
 
-
 The mint method was included for symmetry and feature completeness.
 Most current use cases of share-based Vaults do not ascribe special meaning to the shares such that
 a user would optimize for a specific number of shares (mint) rather than specific amount of underlying (deposit).
@@ -527,6 +522,8 @@ In each case, the value of a preview method is only guaranteed to equal the retu
 if called immediately before in the same transaction.
 
 The `max*` methods are used to check for deposit/withdraw limits on vault capacity. These can be consumed off-chain for more user focused applications or on-chain for more on-chain aggregation/integration use cases.
+
+If implementors intend to support EOA account access directly, they should consider adding an additional function with the means to revert due to slippage loss since they are unable to revert if the output is undesirable.
 
 ## Backwards Compatibility
 
