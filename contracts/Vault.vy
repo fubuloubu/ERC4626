@@ -111,7 +111,12 @@ def _calculateAssets(shareAmount: uint256) -> uint256:
 @view
 @external
 def assetsPerShare() -> uint256:
-    return self._calculateAssets(10**convert(DECIMALS, uint256))
+    assets: uint256 = self._calculateAssets(10**convert(DECIMALS, uint256))
+
+    if assets == 0 and self.asset.balanceOf(self) == 0:
+        return 10**convert(DECIMALS, uint256)  # NOTE: Assume 1:1 price if nothing deposited yet
+
+    return assets
 
 
 @view
@@ -164,12 +169,21 @@ def maxMint() -> uint256:
 @view
 @external
 def previewMint(shares: uint256) -> uint256:
-    return self._calculateAssets(shares)
+    assets: uint256 = self._calculateAssets(shares)
+
+    if assets == 0 and self.asset.balanceOf(self) == 0:
+        return shares  # NOTE: Assume 1:1 price if nothing deposited yet
+
+    return assets
 
 
 @external
 def mint(shares: uint256, receiver: address=msg.sender) -> uint256:
     assets: uint256 = self._calculateAssets(shares)
+
+    if assets == 0 and self.asset.balanceOf(self) == 0:
+        assets = shares  # NOTE: Assume 1:1 price if nothing deposited yet
+
     self.asset.transferFrom(msg.sender, self, assets)
 
     self.totalSupply += shares
@@ -187,12 +201,22 @@ def maxWithdraw() -> uint256:
 @view
 @external
 def previewWithdraw(assets: uint256) -> uint256:
-    return self._calculateShares(assets)
+    shares: uint256 = self._calculateShares(assets)
+
+    # NOTE: Vyper does lazy eval on if, so this avoids SLOADs most of the time
+    if shares == assets and self.totalSupply == 0:
+        return 0  # NOTE: Nothing to redeem
+
+    return shares
 
 
 @external
 def withdraw(assets: uint256, receiver: address=msg.sender, sender: address=msg.sender) -> uint256:
     shares: uint256 = self._calculateShares(assets)
+
+    # NOTE: Vyper does lazy eval on if, so this avoids SLOADs most of the time
+    if shares == assets and self.totalSupply == 0:
+        raise  # Nothing to redeem
 
     if sender != msg.sender:
         self.allowance[sender][msg.sender] -= shares
