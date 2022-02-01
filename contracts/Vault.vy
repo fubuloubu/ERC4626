@@ -99,7 +99,11 @@ def totalAssets() -> uint256:
 @view
 @internal
 def _calculateAssets(shareAmount: uint256) -> uint256:
-    return shareAmount * self.asset.balanceOf(self) / self.totalSupply
+    totalSupply: uint256 = self.totalSupply
+    if totalSupply == 0:
+        return 0
+
+    return shareAmount * self.asset.balanceOf(self) / totalSupply
 
 
 @view
@@ -117,7 +121,11 @@ def assetsOf(owner: address) -> uint256:
 @view
 @internal
 def _calculateShares(assetAmount: uint256) -> uint256:
-    return assetAmount * self.totalSupply / self.asset.balanceOf(self)
+    totalAssets: uint256 = self.asset.balanceOf(self)
+    if totalAssets == 0:
+        return assetAmount
+
+    return assetAmount * self.totalSupply / totalAssets
 
 
 @view
