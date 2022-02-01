@@ -33,12 +33,14 @@ asset: public(ERC20)
 event Deposit:
     depositor: indexed(address)
     receiver: indexed(address)
-    amount: uint256
+    assets: uint256
+    shares: uint256
 
 event Withdraw:
     withdrawer: indexed(address)
     receiver: indexed(address)
-    amount: uint256
+    assets: uint256
+    shares: uint256
 
 
 @external
@@ -102,7 +104,7 @@ def _calculateAssets(shareAmount: uint256) -> uint256:
 
 @view
 @external
-def pricePerShare() -> uint256:
+def assetsPerShare() -> uint256:
     return self._calculateAssets(10**convert(DECIMALS, uint256))
 
 
@@ -120,47 +122,65 @@ def _calculateShares(assetAmount: uint256) -> uint256:
 
 @view
 @external
-def previewDeposit(amount: uint256) -> (uint256, uint256):
-    return amount, self._calculateShares(amount)
+def maxDeposit() -> uint256:
+    return MAX_UINT256
+
+
+@view
+@external
+def previewDeposit(assets: uint256) -> uint256:
+    return self._calculateShares(assets)
 
 
 @external
-def deposit(amount: uint256, receiver: address=msg.sender) -> uint256:
-    shares: uint256 = self._calculateShares(amount)
-    self.asset.transferFrom(msg.sender, self, amount)
+def deposit(assets: uint256, receiver: address=msg.sender) -> uint256:
+    shares: uint256 = self._calculateShares(assets)
+    self.asset.transferFrom(msg.sender, self, assets)
 
     self.totalSupply += shares
     self.balanceOf[receiver] += shares
-    log Deposit(msg.sender, receiver, amount)
+    log Deposit(msg.sender, receiver, assets, shares)
     return shares
 
 
 @view
 @external
-def previewMint(shares: uint256) -> (uint256, uint256):
-    return self._calculateAssets(shares), shares
-
-
-@external
-def mint(shares: uint256, receiver: address=msg.sender) -> uint256:
-    amount: uint256 = self._calculateAssets(shares)
-    self.asset.transferFrom(msg.sender, self, amount)
-
-    self.totalSupply += shares
-    self.balanceOf[receiver] += shares
-    log Deposit(msg.sender, receiver, amount)
-    return amount
+def maxMint() -> uint256:
+    return MAX_UINT256
 
 
 @view
 @external
-def previewWithdraw(amount: uint256) -> (uint256, uint256):
-    return self._calculateShares(amount), amount
+def previewMint(shares: uint256) -> uint256:
+    return self._calculateAssets(shares)
 
 
 @external
-def withdraw(amount: uint256, receiver: address=msg.sender, sender: address=msg.sender) -> uint256:
-    shares: uint256 = self._calculateShares(amount)
+def mint(shares: uint256, receiver: address=msg.sender) -> uint256:
+    assets: uint256 = self._calculateAssets(shares)
+    self.asset.transferFrom(msg.sender, self, assets)
+
+    self.totalSupply += shares
+    self.balanceOf[receiver] += shares
+    log Deposit(msg.sender, receiver, assets, shares)
+    return assets
+
+
+@view
+@external
+def maxWithdraw() -> uint256:
+    return MAX_UINT256  # real max is `self.asset.balanceOf(self)`
+
+
+@view
+@external
+def previewWithdraw(assets: uint256) -> uint256:
+    return self._calculateShares(assets)
+
+
+@external
+def withdraw(assets: uint256, receiver: address=msg.sender, sender: address=msg.sender) -> uint256:
+    shares: uint256 = self._calculateShares(assets)
 
     if sender != msg.sender:
         self.allowance[sender][msg.sender] -= shares
@@ -168,15 +188,21 @@ def withdraw(amount: uint256, receiver: address=msg.sender, sender: address=msg.
     self.totalSupply -= shares
     self.balanceOf[sender] -= shares
 
-    self.asset.transfer(receiver, amount)
-    log Withdraw(sender, receiver, amount)
+    self.asset.transfer(receiver, assets)
+    log Withdraw(sender, receiver, assets, shares)
     return shares
 
 
 @view
 @external
-def previewRedeem(shares: uint256) -> (uint256, uint256):
-    return shares, self._calculateAssets(shares)
+def maxRedeem() -> uint256:
+    return MAX_UINT256  # real max is `self.totalSupply`
+
+
+@view
+@external
+def previewRedeem(shares: uint256) -> uint256:
+    return self._calculateAssets(shares)
 
 
 @external
@@ -184,13 +210,13 @@ def redeem(shares: uint256, receiver: address=msg.sender, sender: address=msg.se
     if sender != msg.sender:
         self.allowance[sender][msg.sender] -= shares
 
-    amount: uint256 = self._calculateAssets(shares)
+    assets: uint256 = self._calculateAssets(shares)
     self.totalSupply -= shares
     self.balanceOf[sender] -= shares
 
-    self.asset.transfer(receiver, amount)
-    log Withdraw(sender, receiver, amount)
-    return amount
+    self.asset.transfer(receiver, assets)
+    log Withdraw(sender, receiver, assets, shares)
+    return assets
 
 
 @external
