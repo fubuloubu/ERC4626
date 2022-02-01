@@ -203,7 +203,7 @@ Any discrepency could cause a revert due to tight slippage bounds by caller.
 MUST emit the `Deposit` event.
 MAY support an additional flow in which the underlying tokens are owned by the Vault contract
 before the `deposit` execution, and are accounted for during `deposit`.
-MUST revert if all of `assets` cannot be deposited.
+MUST revert if all of `assets` cannot be deposited (due to deposit limit being reached, slippage, the user not approving enough underlying tokens to the Vault contract, etc).
 
 Note that most implementations will require pre-approval of the Vault with the Vault's underyling `asset` token.
 
@@ -279,7 +279,7 @@ Any discrepency could cause a revert due to tight slippage bounds by caller.
 MUST emit the `Deposit` event.
 MAY support an additional flow in which the underlying tokens are owned by the Vault contract
 before the `mint` execution, and are accounted for during `mint`.
-MUST revert if all of `shares` cannot be minted.
+MUST revert if all of `shares` cannot be minted (due to deposit limit being reached, slippage, the user not approving enough underlying tokens to the Vault contract, etc).
 
 Note that most implementations will require pre-approval of the Vault with the Vault's underyling `asset` token.
 
@@ -355,7 +355,7 @@ Any discrepency could cause a revert due to tight slippage bounds by caller.
 MUST emit the `Withdraw` event.
 MAY support an additional flow in which the underlying tokens are owned by the Vault contract
 before the `withdraw` execution, and are accounted for during `withdraw`.
-MUST revert if all of `assets` cannot be withdrawn.
+MUST revert if all of `assets` cannot be withdrawn (due to withdrawal limit being reached, slippage, the owner not having enough shares, etc).
 
 Note that some implementations will require pre-requesting to the Vault before a withdrawal may be performed.
 Those methods should be performed separately.
@@ -434,7 +434,7 @@ Any discrepency could cause a revert due to tight slippage bounds by caller.
 MUST emit the `Withdraw` event.
 MAY support an additional flow in which the underlying tokens are owned by the Vault contract
 before the `redeem` execution, and are accounted for during `redeem`.
-MUST revert if all of `shares` cannot be redeemed.
+MUST revert if all of `shares` cannot be redeemed (due to withdrawal limit being reached, slippage, the owner not having enough shares, etc).
 
 Note that some implementations will require pre-requesting to the Vault before a withdrawal may be performed.
 Those methods should be performed separately.
