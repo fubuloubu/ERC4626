@@ -30,7 +30,6 @@ A standard for tokenized Vaults will allow for a similar cambrian explosion to E
 unlocking access to yield and other strategies in a variety of applications
 with little specialized effort from developers.
 
-
 ## Specification
 
 All ERC-4626 tokenized Vaults MUST implement ERC-20 to represent shares.
@@ -55,10 +54,9 @@ ERC-4626 MAY implement [EIP-712](./eip-712.md) to improve the UX of approving sh
          Has units defined by the corresponding ERC20 contract.
 - share: The token of the Vault. Has a ratio of underlying assets
          exchanged on mint/deposit/withdraw/redeem (defined by the Vault).
-- slippage: any difference between advertised share price and economic realities of
+- slippage: Any difference between advertised share price and economic realities of
             deposit to or withdrawal from the Vault, which is not accounted by fees.
-- fee: an amount of assets or shares charged to the Vault. Can be a fee on deposits, yield, AUM, withdrawal, or any other kind of fee.
-
+- fee: An amount of assets or shares charged to the Vault. Can be a fee on deposits, yield, AUM, withdrawal, or any other kind of fee.
 
 ### Methods
 
@@ -66,6 +64,7 @@ ERC-4626 MAY implement [EIP-712](./eip-712.md) to improve the UX of approving sh
 
 The address of the underlying token used for the Vault uses for accounting, depositing, and withdrawing.
 MUST be an ERC-20 token contract.
+MUST *NOT* revert.
 
 ```yaml
 - name: asset
@@ -84,6 +83,7 @@ MUST be an ERC-20 token contract.
 Total amount of the underyling asset that is "managed" by Vault.
 SHOULD include any compounding that occurs from yield.
 MUST be inclusive of any fees that are charged against assets in the Vault.
+MUST *NOT* revert.
 
 ```yaml
 - name: totalAssets
@@ -104,12 +104,13 @@ The current exchange rate of shares to assets, quoted per unit share e.g. `10 **
 MUST be inclusive of any fees that are charged against assets in the Vault.
 MAY *NOT* be completely accurate according to slippage or other on-chain conditions,
 when performing the actual exchange.
+MUST not return 0.
+MUST *NOT* revert.
 
 In certain types of fee calculations, this calculation MAY *NOT* reflect the "per-user" price-per-share,
 and instead should reflect the "average-user's" price-per-share,
 meaning what the average user should expect to see when exchanging to and from.
 The `assetsOf` method SHOULD be used for more accurate calculations of a user's underlying balance.
-
 
 ```yaml
 - name: assetsPerShare
@@ -130,6 +131,7 @@ Total number of underlying assets that `depositor`'s shares represent.
 MAY be more accurate than using `assetsPerShare` or `totalAssets / Vault.totalSupply`
 for certain types of fee calculations.
 MAY *NOT* be completely accurate according to slippage or other on-chain conditions.
+MUST *NOT* revert.
 
 ```yaml
 - name: assetsOf
@@ -151,6 +153,7 @@ Total number of underlying assets that can be deposited.
 
 MUST return `2 ** 256 - 1` if there is no limit on the maximum amount of assets that may be deposited.
 MAY be used in the `previewDeposit` or `deposit` methods for `assets` input parameter.
+MUST *NOT* revert.
 
 ```yaml
 - name: maxDeposit
@@ -172,6 +175,7 @@ given current on-chain conditions.
 MUST return the *exact* amount of Vault shares that would be obtained if depositing a given
 *exact* amount of underlying assets using the `deposit` method.
 MUST be inclusive of deposit fees. Integrators should be aware of the existance of deposit fees.
+MUST *NOT* revert.
 
 Note that any discrepency between `shares * assetsPerShare` and `assets` SHOULD be considered slippage
 in share price or some other type of condition, meaning the depositor will lose assets by depositing.
@@ -199,6 +203,7 @@ Any discrepency could cause a revert due to tight slippage bounds by caller.
 MUST emit the `Deposit` event.
 MAY support an additional flow in which the underlying tokens are owned by the Vault contract
 before the `deposit` execution, and are accounted for during `deposit`.
+MUST revert if all of `assets` cannot be deposited.
 
 Note that most implementations will require pre-approval of the Vault with the Vault's underyling `asset` token.
 
@@ -224,6 +229,7 @@ Total number of underlying shares that can be minted.
 
 MUST return `2 ** 256 - 1` if there is no limit on the maximum amount of shares that may be minted.
 MAY be used in the `previewMint` or `mint` methods for `shares` input parameter.
+MUST *NOT* revert.
 
 ```yaml
 - name: maxMint
@@ -245,6 +251,7 @@ given current on-chain conditions.
 MUST return the *exact* amount of underlying assets that would be deposited in exchange for minting a given
 *exact* amount of Vault shares using the `mint` method.
 MUST be inclusive of deposit fees. Integrators should be aware of the existance of deposit fees.
+MUST *NOT* revert.
 
 Note that any discrepency between `assets / assetsPerShare` and `shares` SHOULD be considered slippage
 in share price or some other type of condition, meaning the depositor will lose assets by minting.
@@ -272,6 +279,7 @@ Any discrepency could cause a revert due to tight slippage bounds by caller.
 MUST emit the `Deposit` event.
 MAY support an additional flow in which the underlying tokens are owned by the Vault contract
 before the `mint` execution, and are accounted for during `mint`.
+MUST revert if all of `shares` cannot be minted.
 
 Note that most implementations will require pre-approval of the Vault with the Vault's underyling `asset` token.
 
@@ -297,6 +305,7 @@ Total number of underlying assets that can be withdrawn.
 
 MUST return `2 ** 256 - 1` if there is no limit on the maximum amount of assets that may be withdrawn.
 MAY be used in the `previewWithdraw` or `withdraw` methods for `assets` input parameter.
+MUST *NOT* revert.
 
 ```yaml
 - name: maxWithdraw
@@ -318,6 +327,7 @@ given current on-chain conditions.
 MUST return the *exact* amount of Vault shares that would be redeemed if withdrawing a given
 *exact* amount of underlying assets using the `withdraw` method.
 MUST be inclusive of withdrawal fees. Integrators should be aware of the existance of withdrawal fees.
+MUST *NOT* revert.
 
 Note that any discrepency between `shares / assetsPerShare` and `assets` SHOULD be considered slippage
 in share price or some other type of condition, meaning the withdrawer will lose assets by withdrawing.
@@ -345,6 +355,7 @@ Any discrepency could cause a revert due to tight slippage bounds by caller.
 MUST emit the `Withdraw` event.
 MAY support an additional flow in which the underlying tokens are owned by the Vault contract
 before the `withdraw` execution, and are accounted for during `withdraw`.
+MUST revert if all of `assets` cannot be withdrawn.
 
 Note that some implementations will require pre-requesting to the Vault before a withdrawal may be performed.
 Those methods should be performed separately.
@@ -373,6 +384,7 @@ Total number of underlying shares that can be redeemed.
 
 MUST return `2 ** 256 - 1` if there is no limit on the maximum amount of shares that may be redeemed.
 MAY be used in the `previewRedeem` or `redeem` methods for `shares` input parameter.
+MUST *NOT* revert.
 
 ```yaml
 - name: maxRedeem
@@ -394,6 +406,7 @@ given current on-chain conditions.
 MUST return the *exact* amount of underlying assets that would be withdrawn if redeeming a given
 *exact* amount of Vault shares using the `redeem` method.
 MUST be inclusive of withdrawal fees. Integrators should be aware of the existance of withdrawal fees.
+MUST *NOT* revert.
 
 Note that any discrepency between `assets * assetsPerShare` and `shares` SHOULD be considered slippage
 in share price or some other type of condition, meaning the withdrawer will lose assets by redeeming.
@@ -421,6 +434,7 @@ Any discrepency could cause a revert due to tight slippage bounds by caller.
 MUST emit the `Withdraw` event.
 MAY support an additional flow in which the underlying tokens are owned by the Vault contract
 before the `redeem` execution, and are accounted for during `redeem`.
+MUST revert if all of `shares` cannot be redeemed.
 
 Note that some implementations will require pre-requesting to the Vault before a withdrawal may be performed.
 Those methods should be performed separately.
@@ -523,7 +537,8 @@ if called immediately before in the same transaction.
 
 The `max*` methods are used to check for deposit/withdraw limits on vault capacity. These can be consumed off-chain for more user focused applications or on-chain for more on-chain aggregation/integration use cases.
 
-If implementors intend to support EOA account access directly, they should consider adding an additional function with the means to revert due to slippage loss since they are unable to revert if the output is undesirable.
+If implementors intend to support EOA account access directly, they should consider adding an additional function with the means to accomodate slippage loss or deposit/withdrawal limits,
+since their transaction will revert if the exact amount is not acheived.
 
 ## Backwards Compatibility
 
