@@ -83,7 +83,7 @@ MUST be an ERC-20 token contract.
 
 Total amount of the underyling asset that is "managed" by Vault.
 SHOULD include any compounding that occurs from yield.
-MUST be the value that any management fees are charged against.
+MUST be inclusive of any fees that are charged against assets in the Vault.
 
 ```yaml
 - name: totalAssets
@@ -101,8 +101,7 @@ MUST be the value that any management fees are charged against.
 
 The current exchange rate of shares to assets, quoted per unit share e.g. `10 ** Vault.decimals()`.
 
-SHOULD be inclusive of any management or performance fees that are charged on the gross yield.
-SHOULD *NOT* be inclusive of any deposit or withdrawal fees.
+MUST be inclusive of any fees that are charged against assets in the Vault.
 MAY *NOT* be completely accurate according to slippage or other on-chain conditions,
 when performing the actual exchange.
 
