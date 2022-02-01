@@ -97,12 +97,6 @@ def totalAssets() -> uint256:
 
 
 @view
-@internal
-def _calculateAssets(shareAmount: uint256) -> uint256:
-    return shareAmount * self.asset.balanceOf(self) / self.totalSupply
-
-
-@view
 @external
 def assetsPerShare() -> uint256:
     return self._calculateAssets(10**convert(DECIMALS, uint256))
@@ -115,26 +109,26 @@ def assetsOf(owner: address) -> uint256:
 
 
 @view
-@internal
-def _calculateShares(assetAmount: uint256) -> uint256:
-    return assetAmount * self.totalSupply / self.asset.balanceOf(self)
-
-
-@view
 @external
 def maxDeposit() -> uint256:
     return MAX_UINT256
 
 
 @view
+@internal
+def _previewDeposit(assetAmount: uint256) -> uint256:
+    return assetAmount * self.totalSupply / self.asset.balanceOf(self)
+
+
+@view
 @external
 def previewDeposit(assets: uint256) -> uint256:
-    return self._calculateShares(assets)
+    return self._previewDeposit(assets)
 
 
 @external
 def deposit(assets: uint256, receiver: address=msg.sender) -> uint256:
-    shares: uint256 = self._calculateShares(assets)
+    shares: uint256 = self._previewDeposit(assets)
     self.asset.transferFrom(msg.sender, self, assets)
 
     self.totalSupply += shares
@@ -150,14 +144,20 @@ def maxMint() -> uint256:
 
 
 @view
+@internal
+def _previewMint(sharesAmount: uint256) -> uint256:
+    return ((shareAmount * self.asset.balanceOf(self)) - 1 / self.totalSupply_ + 1
+
+
+@view
 @external
 def previewMint(shares: uint256) -> uint256:
-    return self._calculateAssets(shares)
+    return self._previewMint(shares)
 
 
 @external
 def mint(shares: uint256, receiver: address=msg.sender) -> uint256:
-    assets: uint256 = self._calculateAssets(shares)
+    assets: uint256 = self._previewMint(shares)
     self.asset.transferFrom(msg.sender, self, assets)
 
     self.totalSupply += shares
@@ -173,14 +173,20 @@ def maxWithdraw() -> uint256:
 
 
 @view
+@internal
+def _previewWithdraw(sharesAmount: uint256) -> uint256:
+    return ((assetAmount * self.totalSupply) - 1 / self.asset.balanceOf(self)) + 1
+
+
+@view
 @external
 def previewWithdraw(assets: uint256) -> uint256:
-    return self._calculateShares(assets)
+    return self._previewWithdraw(assets)
 
 
 @external
 def withdraw(assets: uint256, receiver: address=msg.sender, sender: address=msg.sender) -> uint256:
-    shares: uint256 = self._calculateShares(assets)
+    shares: uint256 = self._previewWithdraw(assets)
 
     if sender != msg.sender:
         self.allowance[sender][msg.sender] -= shares
@@ -200,9 +206,15 @@ def maxRedeem() -> uint256:
 
 
 @view
+@internal
+def _previewRedeem(sharesAmount: uint256) -> uint256:
+    return shareAmount * self.asset.balanceOf(self)) / self.totalSupply_
+
+
+@view
 @external
 def previewRedeem(shares: uint256) -> uint256:
-    return self._calculateAssets(shares)
+    return self._previewRedeem(shares)
 
 
 @external
@@ -210,7 +222,7 @@ def redeem(shares: uint256, receiver: address=msg.sender, sender: address=msg.se
     if sender != msg.sender:
         self.allowance[sender][msg.sender] -= shares
 
-    assets: uint256 = self._calculateAssets(shares)
+    assets: uint256 = self._previewRedeem(shares)
     self.totalSupply -= shares
     self.balanceOf[sender] -= shares
 
