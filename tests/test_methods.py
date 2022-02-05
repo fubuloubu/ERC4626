@@ -5,11 +5,13 @@ def test_asset(vault, token):
     assert vault.asset() == token
 
 
-def test_max_methods(vault):
-    assert vault.maxDeposit() == 2**256 - 1
-    assert vault.maxMint() == 2**256 - 1
-    assert vault.maxWithdraw() == 2**256 - 1
-    assert vault.maxRedeem() == 2**256 - 1
+def test_max_methods(accounts, vault):
+    a = accounts[0]
+
+    assert vault.maxDeposit(a) == 2**256 - 1
+    assert vault.maxMint(a) == 2**256 - 1
+    assert vault.maxWithdraw(a) == 2**256 - 1
+    assert vault.maxRedeem(a) == 2**256 - 1
 
 
 def test_preview_methods(accounts, token, vault):

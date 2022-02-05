@@ -140,7 +140,7 @@ def _calculateShares(assetAmount: uint256) -> uint256:
 
 @view
 @external
-def maxDeposit() -> uint256:
+def maxDeposit(owner: address) -> uint256:
     return MAX_UINT256
 
 
@@ -163,7 +163,7 @@ def deposit(assets: uint256, receiver: address=msg.sender) -> uint256:
 
 @view
 @external
-def maxMint() -> uint256:
+def maxMint(owner: address) -> uint256:
     return MAX_UINT256
 
 
@@ -196,7 +196,7 @@ def mint(shares: uint256, receiver: address=msg.sender) -> uint256:
 
 @view
 @external
-def maxWithdraw() -> uint256:
+def maxWithdraw(owner: address) -> uint256:
     return MAX_UINT256  # real max is `self.asset.balanceOf(self)`
 
 
@@ -233,7 +233,7 @@ def withdraw(assets: uint256, receiver: address=msg.sender, sender: address=msg.
 
 @view
 @external
-def maxRedeem() -> uint256:
+def maxRedeem(owner: address) -> uint256:
     return MAX_UINT256  # real max is `self.totalSupply`
 
 
