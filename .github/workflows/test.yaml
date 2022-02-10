@@ -7,4 +7,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: ApeWorX/github-action@main
+    - uses: ApeWorX/github-action@v1
+    - run: ape compile --size
+    - run: ape test -s
