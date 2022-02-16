@@ -98,7 +98,7 @@ def totalAssets() -> uint256:
 
 @view
 @internal
-def _calculateAssets(shareAmount: uint256) -> uint256:
+def _convertToAssets(shareAmount: uint256) -> uint256:
     totalSupply: uint256 = self.totalSupply
     if totalSupply == 0:
         return 0
@@ -110,25 +110,13 @@ def _calculateAssets(shareAmount: uint256) -> uint256:
 
 @view
 @external
-def assetsPerShare() -> uint256:
-    assets: uint256 = self._calculateAssets(10**convert(DECIMALS, uint256))
-
-    # NOTE: Vyper does lazy eval on if, so this avoids SLOADs most of the time
-    if assets == 0 and self.asset.balanceOf(self) == 0:
-        return 10**convert(DECIMALS, uint256)  # NOTE: Assume 1:1 price if nothing deposited yet
-
-    return assets
-
-
-@view
-@external
-def assetsOf(owner: address) -> uint256:
-    return self._calculateAssets(self.balanceOf[owner])
+def convertToAssets(shareAmount: uint256) -> uint256:
+    return self._convertToAssets(shareAmount)
 
 
 @view
 @internal
-def _calculateShares(assetAmount: uint256) -> uint256:
+def _convertToShares(assetAmount: uint256) -> uint256:
     totalSupply: uint256 = self.totalSupply
     totalAssets: uint256 = self.asset.balanceOf(self)
     if totalAssets == 0 or totalSupply == 0:
@@ -140,6 +128,12 @@ def _calculateShares(assetAmount: uint256) -> uint256:
 
 @view
 @external
+def convertToShares(assetAmount: uint256) -> uint256:
+    return self._convertToShares(assetAmount)
+
+
+@view
+@external
 def maxDeposit(owner: address) -> uint256:
     return MAX_UINT256
 
@@ -147,12 +141,12 @@ def maxDeposit(owner: address) -> uint256:
 @view
 @external
 def previewDeposit(assets: uint256) -> uint256:
-    return self._calculateShares(assets)
+    return self._convertToShares(assets)
 
 
 @external
 def deposit(assets: uint256, receiver: address=msg.sender) -> uint256:
-    shares: uint256 = self._calculateShares(assets)
+    shares: uint256 = self._convertToShares(assets)
     self.asset.transferFrom(msg.sender, self, assets)
 
     self.totalSupply += shares
@@ -170,7 +164,7 @@ def maxMint(owner: address) -> uint256:
 @view
 @external
 def previewMint(shares: uint256) -> uint256:
-    assets: uint256 = self._calculateAssets(shares)
+    assets: uint256 = self._convertToAssets(shares)
 
     # NOTE: Vyper does lazy eval on if, so this avoids SLOADs most of the time
     if assets == 0 and self.asset.balanceOf(self) == 0:
@@ -181,7 +175,7 @@ def previewMint(shares: uint256) -> uint256:
 
 @external
 def mint(shares: uint256, receiver: address=msg.sender) -> uint256:
-    assets: uint256 = self._calculateAssets(shares)
+    assets: uint256 = self._convertToAssets(shares)
 
     if assets == 0 and self.asset.balanceOf(self) == 0:
         assets = shares  # NOTE: Assume 1:1 price if nothing deposited yet
@@ -203,7 +197,7 @@ def maxWithdraw(owner: address) -> uint256:
 @view
 @external
 def previewWithdraw(assets: uint256) -> uint256:
-    shares: uint256 = self._calculateShares(assets)
+    shares: uint256 = self._convertToShares(assets)
 
     # NOTE: Vyper does lazy eval on if, so this avoids SLOADs most of the time
     if shares == assets and self.totalSupply == 0:
@@ -214,7 +208,7 @@ def previewWithdraw(assets: uint256) -> uint256:
 
 @external
 def withdraw(assets: uint256, receiver: address=msg.sender, sender: address=msg.sender) -> uint256:
-    shares: uint256 = self._calculateShares(assets)
+    shares: uint256 = self._convertToShares(assets)
 
     # NOTE: Vyper does lazy eval on if, so this avoids SLOADs most of the time
     if shares == assets and self.totalSupply == 0:
@@ -240,7 +234,7 @@ def maxRedeem(owner: address) -> uint256:
 @view
 @external
 def previewRedeem(shares: uint256) -> uint256:
-    return self._calculateAssets(shares)
+    return self._convertToAssets(shares)
 
 
 @external
@@ -248,7 +242,7 @@ def redeem(shares: uint256, receiver: address=msg.sender, sender: address=msg.se
     if sender != msg.sender:
         self.allowance[sender][msg.sender] -= shares
 
-    assets: uint256 = self._calculateAssets(shares)
+    assets: uint256 = self._convertToAssets(shares)
     self.totalSupply -= shares
     self.balanceOf[sender] -= shares
 
