@@ -13,25 +13,28 @@
   "stateMutability": "view",
   "inputs": [],
   "outputs": [{
-    "name": "totalAssets",
+    "name": "totalManagedAssets",
     "type": "uint256"
   }]
 }, {
-  "name": "assetsPerShare",
-  "type": "function",
-  "stateMutability": "view",
-  "inputs": [],
-  "outputs": [{
-    "name": "assetsPerUnitShare",
-    "type": "uint256"
-  }]
-}, {
-  "name": "assetsOf",
+  "name": "convertToShares",
   "type": "function",
   "stateMutability": "view",
   "inputs": [{
-    "name": "depositor",
-    "type": "address"
+    "name": "assets",
+    "type": "uint256"
+  }],
+  "outputs": [{
+    "name": "shares",
+    "type": "uint256"
+  }]
+}, {
+  "name": "convertToAssets",
+  "type": "function",
+  "stateMutability": "view",
+  "inputs": [{
+    "name": "shares",
+    "type": "uint256"
   }],
   "outputs": [{
     "name": "assets",
@@ -42,7 +45,7 @@
   "type": "function",
   "stateMutability": "view",
   "inputs": [{
-    "name": "caller",
+    "name": "to",
     "type": "address"
   }],
   "outputs": [{
@@ -81,7 +84,7 @@
   "type": "function",
   "stateMutability": "view",
   "inputs": [{
-    "name": "caller",
+    "name": "to",
     "type": "address"
   }],
   "outputs": [{
@@ -120,7 +123,7 @@
   "type": "function",
   "stateMutability": "view",
   "inputs": [{
-    "name": "caller",
+    "name": "from",
     "type": "address"
   }],
   "outputs": [{
