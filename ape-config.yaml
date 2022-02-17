@@ -1,3 +1,13 @@
 plugins:
 - name: vyper
 - name: solidity
+
+
+dependencies:
+  - name: OpenZeppelin
+    github: OpenZeppelin/openzeppelin-contracts
+    version: 4.5.0
+
+solidity:
+  import_remapping:
+    - "@OpenZeppelin=OpenZeppelin/4.5.0"
