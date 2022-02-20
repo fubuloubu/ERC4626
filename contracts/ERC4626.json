@@ -206,7 +206,7 @@
   "name": "Deposit",
   "type": "event",
   "inputs": [{
-    "name": "caller",
+    "name": "_caller",
     "indexed": true,
     "type": "address"
   }, {
@@ -226,7 +226,7 @@
   "name": "Withdraw",
   "type": "event",
   "inputs": [{
-    "name": "caller",
+    "name": "_caller",
     "indexed": true,
     "type": "address"
   }, {
