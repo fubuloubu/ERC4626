@@ -39,6 +39,7 @@ event Deposit:
 event Withdraw:
     withdrawer: indexed(address)
     receiver: indexed(address)
+    owner: indexed(address)
     assets: uint256
     shares: uint256
 
@@ -207,21 +208,21 @@ def previewWithdraw(assets: uint256) -> uint256:
 
 
 @external
-def withdraw(assets: uint256, receiver: address=msg.sender, sender: address=msg.sender) -> uint256:
+def withdraw(assets: uint256, receiver: address=msg.sender, owner: address=msg.sender) -> uint256:
     shares: uint256 = self._convertToShares(assets)
 
     # NOTE: Vyper does lazy eval on if, so this avoids SLOADs most of the time
     if shares == assets and self.totalSupply == 0:
         raise  # Nothing to redeem
 
-    if sender != msg.sender:
-        self.allowance[sender][msg.sender] -= shares
+    if owner != msg.sender:
+        self.allowance[owner][msg.sender] -= shares
 
     self.totalSupply -= shares
-    self.balanceOf[sender] -= shares
+    self.balanceOf[owner] -= shares
 
     self.asset.transfer(receiver, assets)
-    log Withdraw(sender, receiver, assets, shares)
+    log Withdraw(msg.sender, receiver, owner, assets, shares)
     return shares
 
 
@@ -238,16 +239,16 @@ def previewRedeem(shares: uint256) -> uint256:
 
 
 @external
-def redeem(shares: uint256, receiver: address=msg.sender, sender: address=msg.sender) -> uint256:
-    if sender != msg.sender:
-        self.allowance[sender][msg.sender] -= shares
+def redeem(shares: uint256, receiver: address=msg.sender, owner: address=msg.sender) -> uint256:
+    if owner != msg.sender:
+        self.allowance[owner][msg.sender] -= shares
 
     assets: uint256 = self._convertToAssets(shares)
     self.totalSupply -= shares
-    self.balanceOf[sender] -= shares
+    self.balanceOf[owner] -= shares
 
     self.asset.transfer(receiver, assets)
-    log Withdraw(sender, receiver, assets, shares)
+    log Withdraw(msg.sender, receiver, owner, assets, shares)
     return assets
 
 

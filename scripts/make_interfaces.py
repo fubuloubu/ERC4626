@@ -51,7 +51,10 @@ def main():
 
     opts = jsbeautifier.default_options()
     opts.indent_size = 2
-    interface_file.write_text(jsbeautifier.beautify(json.dumps(spec), opts))
+    interface_text = jsbeautifier.beautify(json.dumps(spec), opts)
+    # HACK: "caller" is illegal keyword in Vyper
+    interface_text = interface_text.replace("caller", "_caller")
+    interface_file.write_text(interface_text)
 
     # Write Solidity interface
     interface_file = Path("contracts") / "ERC4626.sol"

@@ -27,7 +27,7 @@ contract SolidityVault is IERC4626, ERC20 {
         return assets * _totalSupply / _totalAssets;
     }
 
-    function maxDeposit(address to) external view returns (uint256) {
+    function maxDeposit(address receiver) external view returns (uint256) {
         return type(uint256).max;
     }
 
@@ -49,7 +49,7 @@ contract SolidityVault is IERC4626, ERC20 {
         return deposit(assets, msg.sender);
     }
 
-    function maxMint(address to) external view returns (uint256) {
+    function maxMint(address receiver) external view returns (uint256) {
         return type(uint256).max;
     }
 
@@ -76,7 +76,7 @@ contract SolidityVault is IERC4626, ERC20 {
         return mint(shares, msg.sender);
     }
 
-    function maxWithdraw(address from) external view returns (uint256) {
+    function maxWithdraw(address owner) external view returns (uint256) {
         return type(uint256).max;
     }
 
@@ -100,7 +100,7 @@ contract SolidityVault is IERC4626, ERC20 {
         _burn(owner, shares);
 
         ERC20(asset).transfer(receiver, assets);
-        emit Withdraw(owner, receiver, assets, shares);
+        emit Withdraw(msg.sender, receiver, owner, assets, shares);
 
         return shares;
     }
@@ -113,7 +113,7 @@ contract SolidityVault is IERC4626, ERC20 {
         return withdraw(assets, msg.sender, msg.sender);
     }
 
-    function maxRedeem(address caller) external view returns (uint256) {
+    function maxRedeem(address owner) external view returns (uint256) {
         return type(uint256).max;
     }
 
@@ -135,7 +135,7 @@ contract SolidityVault is IERC4626, ERC20 {
         _burn(owner, shares);
 
         ERC20(asset).transfer(receiver, assets);
-        emit Withdraw(owner, receiver, assets, shares);
+        emit Withdraw(msg.sender, receiver, owner, assets, shares);
 
         return assets;
     }
