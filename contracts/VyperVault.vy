@@ -44,6 +44,18 @@ event Withdraw:
     shares: uint256
 
 
+##### ERC-TBD #####
+
+requestedAssets: public(HashMap[address, uint256])
+
+event WithdrawRequested:
+    withdrawer: indexed(address)
+    receiver: indexed(address)
+    owner: indexed(address)
+    assets: uint256
+    shares: uint256
+
+
 @external
 def __init__(asset: ERC20):
     self.asset = asset
@@ -189,10 +201,30 @@ def mint(shares: uint256, receiver: address=msg.sender) -> uint256:
     return assets
 
 
+@external
+def requestWithdraw(assets: uint256, receiver: address=msg.sender, owner: address=msg.sender) -> uint256:
+    shares: uint256 = self._convertToShares(assets)
+
+    # NOTE: Vyper does lazy eval on if, so this avoids SLOADs most of the time
+    if shares == assets and self.totalSupply == 0:
+        raise  # Nothing to redeem
+
+    if owner != msg.sender:
+        self.allowance[owner][msg.sender] -= shares
+
+    self.totalSupply -= shares
+    self.balanceOf[owner] -= shares
+    self.requestedAssets[receiver] += assets
+    
+    log WithdrawRequested(msg.sender, receiver, owner, assets, shares)
+    return shares
+
+
 @view
 @external
 def maxWithdraw(owner: address) -> uint256:
-    return MAX_UINT256  # real max is `self.asset.balanceOf(self)`
+    # TODO: Add other timing and liquidity contraints here
+    return self._convertToShares(self.withdrawalRequested[receiver])
 
 
 @view
@@ -218,18 +250,34 @@ def withdraw(assets: uint256, receiver: address=msg.sender, owner: address=msg.s
     if owner != msg.sender:
         self.allowance[owner][msg.sender] -= shares
 
-    self.totalSupply -= shares
-    self.balanceOf[owner] -= shares
+    self.requestedAssets[receiver] -= assets
+    # TODO: Add other timing and liquidity contraints here
 
     self.asset.transfer(receiver, assets)
     log Withdraw(msg.sender, receiver, owner, assets, shares)
     return shares
 
 
+@external
+def requestRedeem(shares: uint256, receiver: address=msg.sender, owner: address=msg.sender) -> uint256:
+    if owner != msg.sender:
+        self.allowance[owner][msg.sender] -= shares
+
+    assets: uint256 = self._convertToAssets(shares)
+
+    self.totalSupply -= shares
+    self.balanceOf[owner] -= shares
+    self.withdrawalRequested[receiver] += assets
+
+    log WithdrawRequested(msg.sender, receiver, owner, assets, shares)
+    return assets
+
+
 @view
 @external
 def maxRedeem(owner: address) -> uint256:
-    return MAX_UINT256  # real max is `self.totalSupply`
+    # TODO: Add other timing and liquidity contraints here
+    return self.withdrawalRequested[receiver]
 
 
 @view
@@ -244,8 +292,8 @@ def redeem(shares: uint256, receiver: address=msg.sender, owner: address=msg.sen
         self.allowance[owner][msg.sender] -= shares
 
     assets: uint256 = self._convertToAssets(shares)
-    self.totalSupply -= shares
-    self.balanceOf[owner] -= shares
+    self.withdrawalRequested[receiver] -= assets
+    # TODO: Add other timing and liquidity contraints here
 
     self.asset.transfer(receiver, assets)
     log Withdraw(msg.sender, receiver, owner, assets, shares)
