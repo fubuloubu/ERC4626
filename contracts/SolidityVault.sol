@@ -96,7 +96,9 @@ contract SolidityVault is IERC4626, ERC20 {
     {
         uint256 shares = convertToShares(assets);
 
-        _spendAllowance(owner, msg.sender, shares);
+        if (owner != msg.sender) {
+            _spendAllowance(owner, msg.sender, shares);
+        }
         _burn(owner, shares);
 
         ERC20(asset).transfer(receiver, assets);
@@ -131,7 +133,9 @@ contract SolidityVault is IERC4626, ERC20 {
     {
         uint256 assets = convertToAssets(shares);
 
-        _spendAllowance(owner, msg.sender, shares);
+        if (owner != msg.sender) {
+            _spendAllowance(owner, msg.sender, shares);
+        }
         _burn(owner, shares);
 
         ERC20(asset).transfer(receiver, assets);
