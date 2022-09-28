@@ -2,7 +2,6 @@ plugins:
 - name: vyper
 - name: solidity
 
-
 dependencies:
   - name: OpenZeppelin
     github: OpenZeppelin/openzeppelin-contracts
