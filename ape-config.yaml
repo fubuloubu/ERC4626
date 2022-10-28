@@ -11,7 +11,7 @@ solidity:
   import_remapping:
     - "@OpenZeppelin=OpenZeppelin/4.7.3"
 
-test:
-  gas:
-    exclude:
-      - method: DEBUG_*
+# test:
+#   gas:
+#     exclude:
+#       - method: DEBUG_*
