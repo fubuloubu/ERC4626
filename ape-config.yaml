@@ -14,5 +14,5 @@ solidity:
 test:
   gas:
     exclude:
-      - contract: Token
+      - contract_name: Token
       - method_name: DEBUG_*
