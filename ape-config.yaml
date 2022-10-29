@@ -14,4 +14,4 @@ solidity:
 test:
   gas:
     exclude:
-      - method: DEBUG_*
+      - method_name: DEBUG_*
