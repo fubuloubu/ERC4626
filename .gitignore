@@ -1,3 +1,6 @@
+# Auto-generated
+hardhat.config.js
+
 .build/
 contracts/.cache/
 *.swp

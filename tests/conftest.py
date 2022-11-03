@@ -11,6 +11,7 @@ def token(sudo, project):
     return sudo.deploy(project.Token)
 
 
-@pytest.fixture(params=["VyperVault", "SolidityVault"])
+@pytest.fixture(params=("VyperVault", "SolidityVault"))
 def vault(sudo, token, project, request):
-    return sudo.deploy(getattr(project, request.param), token)
+    vault = project.get_contract(request.param)
+    return sudo.deploy(vault, token)
