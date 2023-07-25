@@ -1,6 +1,6 @@
 pragma solidity ^0.8;
 
-import { IERC4626 } from "ERC4626.sol";
+import { IERC4626 } from "@OpenZeppelin/interfaces/IERC4626.sol";
 import { ERC20 } from "@OpenZeppelin/token/ERC20/ERC20.sol";
 
 contract SolidityVault is IERC4626, ERC20 {

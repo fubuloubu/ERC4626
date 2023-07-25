@@ -5,11 +5,11 @@ plugins:
 dependencies:
   - name: OpenZeppelin
     github: OpenZeppelin/openzeppelin-contracts
-    version: 4.7.3
+    version: 4.8.0
 
 solidity:
   import_remapping:
-    - "@OpenZeppelin=OpenZeppelin/4.7.3"
+    - "@OpenZeppelin=OpenZeppelin/4.8.0"
 
 test:
   gas:
