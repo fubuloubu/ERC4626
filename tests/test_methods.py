@@ -1,4 +1,5 @@
 AMOUNT = 100 * 10**18
+from ape.utils import ZERO_ADDRESS
 
 
 def test_asset(vault, token):
@@ -27,7 +28,13 @@ def test_preview_methods(accounts, token, vault):
 
     token.DEBUG_mint(a, AMOUNT, sender=a)
     token.approve(vault, AMOUNT, sender=a)
-    vault.deposit(AMOUNT, sender=a)
+    tx = vault.deposit(AMOUNT, sender=a)
+
+    assert tx.events == [
+        token.Transfer(a, vault, AMOUNT),
+        vault.Transfer(ZERO_ADDRESS, a, AMOUNT),
+        vault.Deposit(a, a, AMOUNT, AMOUNT),
+    ]
 
     assert vault.totalAssets() == AMOUNT
     assert vault.convertToAssets(10**18) == 10**18  # 1:1 price
