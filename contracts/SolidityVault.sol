@@ -41,6 +41,7 @@ contract SolidityVault is IERC4626, ERC20 {
 
         _mint(receiver, shares);
         emit Deposit(msg.sender, receiver, assets, shares);
+        emit Transfer(address(0), receiver, shares);
 
         return shares;
     }
@@ -68,6 +69,7 @@ contract SolidityVault is IERC4626, ERC20 {
 
         _mint(receiver, shares);
         emit Deposit(msg.sender, receiver, assets, shares);
+        emit Transfer(address(0), receiver, shares);
 
         return assets;
     }
@@ -103,6 +105,7 @@ contract SolidityVault is IERC4626, ERC20 {
 
         ERC20(asset).transfer(receiver, assets);
         emit Withdraw(msg.sender, receiver, owner, assets, shares);
+        emit Transfer(owner, address(0), shares);
 
         return shares;
     }
@@ -140,6 +143,7 @@ contract SolidityVault is IERC4626, ERC20 {
 
         ERC20(asset).transfer(receiver, assets);
         emit Withdraw(msg.sender, receiver, owner, assets, shares);
+        emit Transfer(owner, address(0), shares);
 
         return assets;
     }

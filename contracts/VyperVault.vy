@@ -153,6 +153,7 @@ def deposit(assets: uint256, receiver: address=msg.sender) -> uint256:
     self.totalSupply += shares
     self.balanceOf[receiver] += shares
     log Deposit(msg.sender, receiver, assets, shares)
+    log Transfer(empty(address), receiver, shares)
     return shares
 
 
@@ -186,6 +187,7 @@ def mint(shares: uint256, receiver: address=msg.sender) -> uint256:
     self.totalSupply += shares
     self.balanceOf[receiver] += shares
     log Deposit(msg.sender, receiver, assets, shares)
+    log Transfer(empty(address), receiver, shares)
     return assets
 
 
@@ -223,6 +225,7 @@ def withdraw(assets: uint256, receiver: address=msg.sender, owner: address=msg.s
 
     self.asset.transfer(receiver, assets)
     log Withdraw(msg.sender, receiver, owner, assets, shares)
+    log Transfer(owner, empty(address), shares)
     return shares
 
 
@@ -249,6 +252,7 @@ def redeem(shares: uint256, receiver: address=msg.sender, owner: address=msg.sen
 
     self.asset.transfer(receiver, assets)
     log Withdraw(msg.sender, receiver, owner, assets, shares)
+    log Transfer(owner, empty(address), shares)
     return assets
 
 
