@@ -1,6 +1,6 @@
 pragma solidity ^0.8;
 
-import { IERC4626 } from "ERC4626.sol";
+import { IERC4626 } from "@OpenZeppelin/interfaces/IERC4626.sol";
 import { ERC20 } from "@OpenZeppelin/token/ERC20/ERC20.sol";
 
 contract SolidityVault is IERC4626, ERC20 {
@@ -41,7 +41,7 @@ contract SolidityVault is IERC4626, ERC20 {
 
         _mint(receiver, shares);
         emit Deposit(msg.sender, receiver, assets, shares);
-        emit Transfer(address(0), receiver, shares);
+        // IMPORTANT: `_mint` does ERC20 `Transfer` log
 
         return shares;
     }
@@ -69,7 +69,7 @@ contract SolidityVault is IERC4626, ERC20 {
 
         _mint(receiver, shares);
         emit Deposit(msg.sender, receiver, assets, shares);
-        emit Transfer(address(0), receiver, shares);
+        // IMPORTANT: `_mint` does ERC20 `Transfer` log
 
         return assets;
     }
@@ -105,7 +105,7 @@ contract SolidityVault is IERC4626, ERC20 {
 
         ERC20(asset).transfer(receiver, assets);
         emit Withdraw(msg.sender, receiver, owner, assets, shares);
-        emit Transfer(owner, address(0), shares);
+        // IMPORTANT: `_burn` does ERC20 `Transfer` log
 
         return shares;
     }
@@ -143,7 +143,7 @@ contract SolidityVault is IERC4626, ERC20 {
 
         ERC20(asset).transfer(receiver, assets);
         emit Withdraw(msg.sender, receiver, owner, assets, shares);
-        emit Transfer(owner, address(0), shares);
+        // IMPORTANT: `_burn` does ERC20 `Transfer` log
 
         return assets;
     }
